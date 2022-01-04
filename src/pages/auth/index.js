@@ -12,6 +12,7 @@ import LockIcon from '../../assets/icons/LockIcon'
 import EyeIcon from '../../assets/icons/EyeClosedIcon'
 import GoogleLogoIcon from '../../assets/icons/GoogleLogoIcon'
 
+// this would need to be split imo it's way too big of a file
 const Auth = () => {
   const [isUserLoggingIn, toggleIsUserLoggingIn] = useToggle(true)
   const [isPasswordVisible, toggleIsPasswordVisible] = useToggle(false)
@@ -83,6 +84,7 @@ const Auth = () => {
     {Icon: LockIcon, alt: 'Lock Icon', type: 'password', label: 'Password', value: password, setState: setPassword, autoComplete: isUserLoggingIn ? 'current-password' : 'new-password'}
   ]
 
+  // likely throw this component into a new file
   const inputsMapped = inputs.map(({Icon, type, label, value, setState, autoComplete}) => {
     const onChangeHandler = e => setState(e.target.value)
 
@@ -93,10 +95,10 @@ const Auth = () => {
       : 'email'
     
     return (
-      <div key={type} className="px-4 py-2 bg-white text-gray-500 w-64 sm:w-80 flex flex-row items-center rounded-md mt-4 focus-within:text-gray-900 dark:bg-black dark:text-gray-300 dark:focus-within:text-gray-50">
+      <div key={type} className="flex flex-row items-center w-64 px-4 py-2 mt-4 text-gray-500 bg-white rounded-md sm:w-80 focus-within:text-gray-900 dark:bg-black dark:text-gray-300 dark:focus-within:text-gray-50">
         <Icon />
         <input
-          className="placeholder-current bg-transparent ml-2 w-full focus:outline-none dark:placeholder-current"
+          className="w-full ml-2 placeholder-current bg-transparent focus:outline-none dark:placeholder-current"
           type={specialType}
           placeholder={label}
           aria-label={label}
@@ -125,21 +127,21 @@ const Auth = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className="w-screen h-screen flex justify-center items-center bg-white dark:bg-black">
+      <main className="flex items-center justify-center w-screen h-screen bg-white dark:bg-black">
         <section className="flex flex-col items-center">
-          <div className="bg-gray-200 py-8 px-12 sm:p-12 rounded-xl dark:bg-gray-800">
+          <div className="px-12 py-8 bg-gray-200 sm:p-12 rounded-xl dark:bg-gray-800">
             <fieldset>
-              <legend className="mb-1 sm:mb-2 text-2xl font-medium text-gray-800 dark:text-gray-100">
+              <legend className="mb-1 text-2xl font-medium text-gray-800 sm:mb-2 dark:text-gray-100">
                 {isUserLoggingIn ? 'Login to Budgewit' : 'Welcome to Budgewit!'}
               </legend>
               <form onSubmit={onSubmitHandler}>
                 <div className="flex flex-col">
                   {inputsMapped}
                 </div>
-                <div className="flex flex-col-reverse items-center sm:flex-row sm:items-end sm:justify-between mt-6 sm:mt-8">
+                <div className="flex flex-col-reverse items-center mt-6 sm:flex-row sm:items-end sm:justify-between sm:mt-8">
                   {isUserLoggingIn && (
                     <Link href="/auth/forgot-password">
-                      <a className="bg-transparent text-sm text-gray-700 dark:text-gray-400 hover:underline cursor-pointer">Forgot your password?</a>
+                      <a className="text-sm text-gray-700 bg-transparent cursor-pointer dark:text-gray-400 hover:underline">Forgot your password?</a>
                     </Link>
                   )}
                   <button 
@@ -153,21 +155,21 @@ const Auth = () => {
             </fieldset>
           </div>
           <div className="flex flex-row mt-4">
-            <p className="text-sm text-gray-900 dark:text-gray-200 mr-2">
+            <p className="mr-2 text-sm text-gray-900 dark:text-gray-200">
               {isUserLoggingIn ? 'Need an account?' : 'Already have an account?'}
             </p>
             <input 
               type="button" 
-              className="bg-transparent text-sm cursor-pointer text-green-500 dark:text-green-400 font-semibold hover:underline active:underline active:outline-none focus:outline-none active:text-gray-200"
+              className="text-sm font-semibold text-green-500 bg-transparent cursor-pointer dark:text-green-400 hover:underline active:underline active:outline-none focus:outline-none active:text-gray-200"
               value={isUserLoggingIn ? 'Sign up' : 'Login'} 
               onClick={toggleIsUserLoggingIn}
             />
           </div>
-          <div className="flex flex-col justify-center items-center mt-4">
-            <h2 className="dark:text-white font-semibold text-sm mb-2">Or</h2>
-            <button type="button" onClick={googleSignInTest} className="bg-gray-200 dark:bg-gray-800 flex flex-row items-center p-2 rounded-md">
+          <div className="flex flex-col items-center justify-center mt-4">
+            <h2 className="mb-2 text-sm font-semibold dark:text-white">Or</h2>
+            <button type="button" onClick={googleSignInTest} className="flex flex-row items-center p-2 bg-gray-200 rounded-md dark:bg-gray-800">
               <GoogleLogoIcon />
-              <span className="pl-2 text-gray-800 dark:text-gray-100 text-sm">Continue with Google</span>
+              <span className="pl-2 text-sm text-gray-800 dark:text-gray-100">Continue with Google</span>
             </button>
           </div>
         </section>
