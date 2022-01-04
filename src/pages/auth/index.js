@@ -2,20 +2,19 @@ import { useEffect, useState } from 'react'
 import Head from 'next/head'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, GoogleAuthProvider, signInWithRedirect, sendEmailVerification, getRedirectResult } from 'firebase/auth'
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, sendEmailVerification, getRedirectResult } from 'firebase/auth'
 import { logEvent } from 'firebase/analytics'
 
 import useFirebase from '../../hooks/useFirebase'
 import useToggle from '../../hooks/useToggle'
 import EnvelopeIcon from '../../assets/icons/EnvelopeIcon'
 import LockIcon from '../../assets/icons/LockIcon'
-import EyeIcon from '../../assets/icons/EyeClosedIcon'
-import GoogleLogoIcon from '../../assets/icons/GoogleLogoIcon'
+import AuthInput from '../../components/Auth/AuthInput'
+import OtherAuthMethods from '../../components/Auth/OtherAuthMethods'
 
 // this would need to be split imo it's way too big of a file
 const Auth = () => {
   const [isUserLoggingIn, toggleIsUserLoggingIn] = useToggle(true)
-  const [isPasswordVisible, toggleIsPasswordVisible] = useToggle(false)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState(null)
@@ -25,6 +24,7 @@ const Auth = () => {
 
   const loginOrSignupText = isUserLoggingIn ? 'Login' : 'Sign Up'
 
+  // this is for handling the redirect, again, you can probably do this a better way, but I haven't put in the time to find it yet
   useEffect(() => {
     if (auth) {
       getRedirectResult(auth)
@@ -41,18 +41,7 @@ const Auth = () => {
     }
   }, [auth, analytics, router])
 
-  const googleSignInTest = async () => {
-    const provider = new GoogleAuthProvider()
-
-    try {
-      signInWithRedirect(auth, provider)
-    } catch (err) {
-      const { code, message, email } = err
-      // const credential = GoogleAuthProvider.credentialFromError(err)
-      console.error(code, message, email)
-    }
-  }
-
+  //this is for the default email and password fields
   const onSubmitHandler = async e => {
     e.preventDefault()
 
@@ -79,45 +68,13 @@ const Auth = () => {
     }
   }
 
+  // this is the way I go about making inputs generally- it allows me to easily add more if ever needed, and I can change the code in one place
   const inputs = [
     {Icon: EnvelopeIcon, type: 'email', label: 'Email', value: email, setState: setEmail, autoComplete: 'email'},
     {Icon: LockIcon, alt: 'Lock Icon', type: 'password', label: 'Password', value: password, setState: setPassword, autoComplete: isUserLoggingIn ? 'current-password' : 'new-password'}
   ]
 
-  // likely throw this component into a new file
-  const inputsMapped = inputs.map(({Icon, type, label, value, setState, autoComplete}) => {
-    const onChangeHandler = e => setState(e.target.value)
 
-    const specialType = type === 'password' 
-      ? isPasswordVisible 
-        ? 'text' 
-        : 'password' 
-      : 'email'
-    
-    return (
-      <div key={type} className="flex flex-row items-center w-64 px-4 py-2 mt-4 text-gray-500 bg-white rounded-md sm:w-80 focus-within:text-gray-900 dark:bg-black dark:text-gray-300 dark:focus-within:text-gray-50">
-        <Icon />
-        <input
-          className="w-full ml-2 placeholder-current bg-transparent focus:outline-none dark:placeholder-current"
-          type={specialType}
-          placeholder={label}
-          aria-label={label}
-          name={type}
-          value={value} 
-          onChange={onChangeHandler}
-          autoComplete={autoComplete}
-          aria-required
-          required
-          //aria-invalid={checkEmailAndPassword}
-        />
-        {type === 'password' && (
-          <button type="button" title={isPasswordVisible ? 'Hide Password' : 'Show Password'} onClick={toggleIsPasswordVisible}>
-            <EyeIcon isEyeClosed={isPasswordVisible} />
-          </button>
-        )}
-      </div>
-    )
-  })
 
   return (
     <>
@@ -136,17 +93,19 @@ const Auth = () => {
               </legend>
               <form onSubmit={onSubmitHandler}>
                 <div className="flex flex-col">
-                  {inputsMapped}
+                  {inputs.map(input => <AuthInput input={input} />)}
                 </div>
                 <div className="flex flex-col-reverse items-center mt-6 sm:flex-row sm:items-end sm:justify-between sm:mt-8">
                   {isUserLoggingIn && (
                     <Link href="/auth/forgot-password">
-                      <a className="text-sm text-gray-700 bg-transparent cursor-pointer dark:text-gray-400 hover:underline">Forgot your password?</a>
+                      <a className="text-sm text-gray-700 bg-transparent cursor-pointer dark:text-gray-400 hover:underline">
+                        Forgot your password?
+                      </a>
                     </Link>
                   )}
                   <button 
                     type="submit"
-                    className={`bg-green-500 transition-width w-full ${isUserLoggingIn && 'sm:w-4/12'} mb-2 sm:mb-0 px-8 py-2 rounded-md text-white text-md font-medium dark:bg-green-600 focus:outline-none focus:bg-green-800 active:bg-green-800 hover:bg-green-800`}
+                    className={`bg-green-500 transition-width w-full ${isUserLoggingIn ? 'sm:w-4/12' : ''} mb-2 sm:mb-0 px-8 py-2 rounded-md text-white text-md font-medium dark:bg-green-600 focus:outline-none focus:bg-green-800 active:bg-green-800 hover:bg-green-800`}
                   >
                     {loginOrSignupText}
                   </button>
@@ -165,13 +124,7 @@ const Auth = () => {
               onClick={toggleIsUserLoggingIn}
             />
           </div>
-          <div className="flex flex-col items-center justify-center mt-4">
-            <h2 className="mb-2 text-sm font-semibold dark:text-white">Or</h2>
-            <button type="button" onClick={googleSignInTest} className="flex flex-row items-center p-2 bg-gray-200 rounded-md dark:bg-gray-800">
-              <GoogleLogoIcon />
-              <span className="pl-2 text-sm text-gray-800 dark:text-gray-100">Continue with Google</span>
-            </button>
-          </div>
+          <OtherAuthMethods />
         </section>
       </main>
     </>
