@@ -9,8 +9,8 @@ const Home = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main>
-        Hello There
+      <main className="dark:text-white">
+        Home
       </main>
     </div>
   )

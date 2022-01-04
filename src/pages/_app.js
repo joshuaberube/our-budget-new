@@ -1,15 +1,15 @@
 import { initializeApp } from 'firebase/app'
-import Layout from '../components/Layout';
+import Layout from '../components/Layout'
 import 'tailwindcss/tailwind.css'
 
 const firebaseConfig = {
-  apiKey: 'AIzaSyA3pikzlg5KAJB3QTYhw1qv6ZvWrzcRJd4',
-  authDomain: 'our-budget-ddd27.firebaseapp.com',
-  projectId: 'our-budget-ddd27',
-  storageBucket: 'our-budget-ddd27.appspot.com',
-  messagingSenderId: '489537376887',
-  appId: '1:489537376887:web:23b55d91bb42b725636c72',
-  measurementId: 'G-XFW7VQJ47E'
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASURMENT_ID
 };
 
 initializeApp(firebaseConfig)

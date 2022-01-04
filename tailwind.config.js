@@ -14,7 +14,11 @@ module.exports = {
       white: colors.white,
       black: colors.black
     },
-    extend: {},
+    extend: {
+      transitionProperty: {
+        width: 'width'
+      }
+    },
   },
   variants: {
     extend: {

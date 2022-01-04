@@ -3,10 +3,11 @@ import Header from './header'
 
 const Layout = ({ children }) => {
   const router = useRouter()
+  const authPages = router.pathname.includes('/auth')
 
   return (
     <>
-      {router.pathname !== '/auth' && <Header />}
+      {!authPages && <Header />}
       {children}
     </>
   )
